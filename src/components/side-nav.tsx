@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 
 import { Icon } from '@iconify/react';
 
-import { drawerContent } from '../constants';
+import { newDrawerContent } from '../constants';
 
 type NavItem = {
   id: string;
@@ -24,7 +24,7 @@ const DrawerNav = () => {
         <div className="flex flex-row space-x-3 items-center justify-center h-5 w-full"></div>
 
         <div className="flex flex-col space-y-2">
-          {drawerContent.menu.items.map((item, idx) => {
+          {newDrawerContent.items.map((item, idx) => {
             return <MenuItemDrawer key={idx} item={item} />;
           })}
         </div>
@@ -38,6 +38,17 @@ const MenuItemDrawer = ({ item }: { item: NavItem }) => {
   const [subMenuOpen, setSubMenuOpen] = useState(false);
   const toggleSubMenu = () => {
     setSubMenuOpen(!subMenuOpen);
+  };
+
+  const transformUrl = (
+    url: string,
+    pageId: string = 'clt6sq7730000y9oq9bse775v',
+    persona: string = 'default',
+  ) => {
+    const baseURL = new URL(url).origin;
+    const handle = url.split('/').pop();
+    const newUrl = `${baseURL}/a/h/${pageId}/${persona}/s/${handle}`;
+    return newUrl;
   };
 
   return (
@@ -61,23 +72,15 @@ const MenuItemDrawer = ({ item }: { item: NavItem }) => {
 
           {subMenuOpen && (
             <div className="my-2 ml-12 flex flex-col space-y-4">
-              {item.items?.map((subItem, idx) => {
-                return (
-                  <Link
-                    key={idx}
-                    href={subItem.url}
-                    className={`${subItem.url === pathname ? 'font-bold' : ''}`}
-                  >
-                    <span>{subItem.title}</span>
-                  </Link>
-                );
-              })}
+              {item.items?.map((subItem, idx) => (
+                <MenuItemDrawer key={idx} item={subItem} />
+              ))}
             </div>
           )}
         </>
       ) : (
         <Link
-          href={item.url}
+          href={transformUrl(item.url)}
           className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-100 ${
             item.url === pathname ? 'bg-zinc-100' : ''
           }`}
@@ -89,3 +92,57 @@ const MenuItemDrawer = ({ item }: { item: NavItem }) => {
   );
 };
 export default DrawerNav;
+//   const pathname = usePathname();
+//   const [subMenuOpen, setSubMenuOpen] = useState(false);
+//   const toggleSubMenu = () => {
+//     setSubMenuOpen(!subMenuOpen);
+//   };
+
+//   return (
+//     <div className="">
+//       {item.items.length > 0 ? (
+//         <>
+//           <button
+//             onClick={toggleSubMenu}
+//             className={`flex flex-row items-center p-2 rounded-lg hover-bg-zinc-100 w-full justify-between hover:bg-zinc-100 ${
+//               pathname.includes(item.url) ? 'bg-zinc-100' : ''
+//             }`}
+//           >
+//             <span className="font-semibold text-base flex">{item.title}</span>
+
+//             {subMenuOpen ? (
+//               <Icon icon="lucide:minus" width="18" height="18" />
+//             ) : (
+//               <Icon icon="lucide:plus" width="18" height="18" />
+//             )}
+//           </button>
+
+//           {subMenuOpen && (
+//             <div className="my-2 ml-12 flex flex-col space-y-4">
+//               {item.items?.map((subItem, idx) => {
+//                 return (
+//                   <Link
+//                     key={idx}
+//                     href={subItem.url}
+//                     className={`${subItem.url === pathname ? 'font-bold' : ''}`}
+//                   >
+//                     <span>{subItem.title}</span>
+//                   </Link>
+//                 );
+//               })}
+//             </div>
+//           )}
+//         </>
+//       ) : (
+//         <Link
+//           href={item.url}
+//           className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-100 ${
+//             item.url === pathname ? 'bg-zinc-100' : ''
+//           }`}
+//         >
+//           <span className="font-semibold text-base flex">{item.title}</span>
+//         </Link>
+//       )}
+//     </div>
+//   );
+// };
